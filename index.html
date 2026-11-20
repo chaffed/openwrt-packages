@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chaffed's OpenWrt packages</title>
+<style>
+:root { --bg: #ffffff; --fg: #1d1f21; --muted: #5c6370; --code: #f3f4f6; --line: #e2e4e8; --link: #1f6feb; }
+@media (prefers-color-scheme: dark) { :root { --bg: #16181c; --fg: #e6e6e6; --muted: #a0a6b0; --code: #23262c; --line: #33373e; --link: #6ea8fe; } }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; }
+main { max-width: 46rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+h1 { font-size: 1.6rem; margin: 0 0 .3rem; } h2 { font-size: 1.15rem; margin-top: 2rem; }
+p.lead, .muted { color: var(--muted); }
+a { color: var(--link); }
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: .8rem 1rem; overflow-x: auto; font-size: .9rem; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+table { border-collapse: collapse; width: 100%; } td, th { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+</style>
+</head>
+<body>
+<main>
+<h1>chaffed's OpenWrt packages</h1>
+<p class="lead">A package source for OpenWrt and GL.iNet routers.</p>
+<table>
+<tr><th>Package</th><th>What it does</th></tr>
+<tr><td><a href="https://github.com/chaffed/luci-app-ispy">luci-app-ispy</a></td><td>Scheduled speed tests, a dashboard, and a report comparing what your ISP delivers with what it advertises.</td></tr>
+<tr><td><a href="https://github.com/chaffed/luci-app-modemhealth">luci-app-modemhealth</a></td><td>Watches your cable modem (SURFboard S33/S34): signal, errors, dropouts and outages, with a report for your ISP.</td></tr>
+</table>
+<h2>Add the source (once)</h2>
+<p>Over SSH on the router:</p>
+<pre><code>wget -O /tmp/chaffed.pub https://chaffed.github.io/openwrt-packages/chaffed.pub
+opkg-key add /tmp/chaffed.pub
+echo 'src/gz chaffed https://chaffed.github.io/openwrt-packages' &gt;&gt; /etc/opkg/customfeeds.conf
+opkg update</code></pre>
+<p class="muted">The key lets the router check the package list came from here (fingerprint <code>e657e1c1cfd7d36d</code>).</p>
+<h2>Install</h2>
+<pre><code>opkg install luci-app-modemhealth luci-app-ispy</code></pre>
+<p class="muted">Updates then arrive with <code>opkg upgrade</code> or LuCI's System → Software. Works with OpenWrt 21.02–24.10 and GL.iNet firmware 4.x. <a href="https://github.com/chaffed/openwrt-packages">Source and details</a>.</p>
+</main>
+</body>
+</html>

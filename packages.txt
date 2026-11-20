@@ -1,0 +1,2 @@
+chaffed/luci-app-ispy
+chaffed/luci-app-modemhealth

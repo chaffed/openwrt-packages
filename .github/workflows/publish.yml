@@ -1,0 +1,63 @@
+name: publish
+
+# Rebuilds the package source from the latest release of every repository
+# in packages.txt, signs the index and publishes it with GitHub Pages.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the latest release of each package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p site
+          while read -r repo; do
+            [ -n "$repo" ] || continue
+            gh release download -R "$repo" --pattern '*.ipk' -D site
+          done < packages.txt
+          ls -l site
+
+      - name: Build the package index
+        run: scripts/build-feed.sh site
+
+      - name: Sign the index (usign, as on OpenWrt)
+        env:
+          USIGN_SECRET_KEY: ${{ secrets.USIGN_SECRET_KEY }}
+        run: |
+          umask 077
+          printf '%s\n' "$USIGN_SECRET_KEY" > "$RUNNER_TEMP/usign.sec"
+          cp chaffed.pub site/
+          docker run --rm -v "$PWD/site:/site" -v "$RUNNER_TEMP:/key:ro" openwrt/rootfs:x86-64-23.05.6 \
+            sh -c 'usign -S -m /site/Packages -s /key/usign.sec -x /site/Packages.sig && usign -V -m /site/Packages -p /site/chaffed.pub'
+          rm -f "$RUNNER_TEMP/usign.sec"
+
+      - name: Add the landing page
+        run: cp index.html site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
