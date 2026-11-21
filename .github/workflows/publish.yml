@@ -52,8 +52,31 @@ jobs:
             sh -c 'usign -S -m /site/Packages -s /key/usign.sec -x /site/Packages.sig && usign -V -m /site/Packages -p /site/chaffed.pub'
           rm -f "$RUNNER_TEMP/usign.sec"
 
-      - name: Add the landing page
-        run: cp index.html site/
+      - name: Add the web site (landing page, setup scripts, pictures)
+        run: cp -R web/. site/
+
+      - name: Check the setup scripts
+        run: |
+          shellcheck web/setup.sh web/install.sh
+          docker run --rm -v "$PWD/web:/web:ro" mcr.microsoft.com/powershell:lts-alpine-3.20 pwsh -NoProfile -Command \
+            '$e = $null; [System.Management.Automation.Language.Parser]::ParseFile("/web/install.ps1", [ref]$null, [ref]$e) | Out-Null; if ($e) { $e; exit 1 }'
+
+      - name: Add the package source to a clean OpenWrt 23.05 and install every app (setup.sh, against this build)
+        run: |
+          python3 -m http.server 8099 --bind 127.0.0.1 --directory site > /dev/null 2>&1 &
+          sleep 2
+          docker run --rm --network host openwrt/rootfs:x86-64-23.05.6 sh -c '
+            set -e
+            mkdir -p /var/lock /var/run
+            wget -qO /tmp/setup.sh http://127.0.0.1:8099/setup.sh
+            CHAFFED_FEED=http://127.0.0.1:8099 sh /tmp/setup.sh all
+            for p in $(sed -n "s/^Package: //p" /var/opkg-lists/chaffed); do
+              opkg list-installed "$p" | grep -q . || { echo "FAIL $p is not installed"; exit 1; }
+              echo "ok   $p installed"
+            done
+            echo "--- run again: changes nothing"
+            CHAFFED_FEED=http://127.0.0.1:8099 sh /tmp/setup.sh | grep -q "^Added" && { echo "FAIL a second run changed something"; exit 1; }
+            echo "ok   a second run changes nothing"'
 
       - uses: actions/upload-pages-artifact@v3
         with:

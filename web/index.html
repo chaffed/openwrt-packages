@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chaffed's OpenWrt packages</title>
+<meta name="description" content="Apps for GL.iNet and OpenWrt routers: Auto Backup, ISPy and Modem Health, from one signed package source.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6fdf'/%3E%3Cpath d='M9 19a7 7 0 0 1 14 0' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='19' r='2.4' fill='white'/%3E%3C/svg%3E">
+<style>
+:root {
+	--bg: #ffffff; --bg-soft: #f6f7f9; --fg: #1b1e23; --muted: #5b6270; --line: #e3e6ea;
+	--code: #f3f4f6; --link: #2f6fdf; --accent: #2f6fdf; --accent-fg: #ffffff; --card: #ffffff;
+	--shadow: 0 1px 2px rgba(16,24,40,.05), 0 4px 16px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #121418; --bg-soft: #181b20; --fg: #e7e9ec; --muted: #a2a9b4; --line: #2b3038;
+		--code: #1e2228; --link: #7aa7ff; --accent: #5a8cff; --accent-fg: #0b0d10; --card: #181b20;
+		--shadow: 0 1px 2px rgba(0,0,0,.4);
+	}
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--link); }
+main, header > div, footer > div { max-width: 62rem; margin: 0 auto; padding: 0 1rem; }
+header { background: var(--bg-soft); border-bottom: 1px solid var(--line); padding: 2.5rem 0 2rem; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.2; margin: 0 0 .5rem; }
+h2 { font-size: 1.35rem; margin: 2.6rem 0 .8rem; }
+h3 { font-size: 1.1rem; margin: 0 0 .3rem; }
+.lead { font-size: 1.12rem; color: var(--muted); max-width: 44rem; margin: 0; }
+.muted { color: var(--muted); }
+.small { font-size: .9rem; }
+.cta { display: inline-block; margin-top: 1.2rem; padding: .6rem 1.1rem; border-radius: 8px; background: var(--accent); color: var(--accent-fg); text-decoration: none; font-weight: 600; }
+.apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); gap: 1rem; }
+.app { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.app img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); background: var(--bg-soft); display: block; }
+.app .body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; flex: 1; }
+.app p { margin: .3rem 0 .8rem; }
+.app ul { margin: 0 0 1rem; padding-left: 1.1rem; color: var(--muted); font-size: .94rem; }
+.app .links { margin-top: auto; display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .94rem; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+:not(pre) > code { background: var(--code); border-radius: 4px; padding: .1em .35em; }
+.cmd { position: relative; }
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: .85rem 1rem; padding-right: 4.8rem; overflow-x: auto; margin: .4rem 0 1rem; }
+.copy { position: absolute; top: .45rem; right: .45rem; font: inherit; font-size: .82rem; padding: .25rem .6rem; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+.copy:hover { border-color: var(--accent); }
+.tabs { display: flex; flex-wrap: wrap; gap: .3rem; border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
+.tabs button { font: inherit; font-weight: 600; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: .55rem .9rem; margin-bottom: -1px; cursor: pointer; min-height: 44px; }
+.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
+.tabs button:focus-visible, .copy:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[role=tabpanel][hidden] { display: none; }
+ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .3rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+td, th { text-align: left; padding: .5rem .55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+details { border: 1px solid var(--line); border-radius: 8px; padding: .6rem .9rem; margin: .5rem 0; background: var(--card); }
+details summary { cursor: pointer; font-weight: 600; }
+footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 1.5rem 0 2.5rem; }
+</style>
+</head>
+<body>
+<header>
+<div>
+<h1>chaffed's OpenWrt packages</h1>
+<p class="lead">Apps for GL.iNet and OpenWrt routers, from one signed package source. Each app shows up in GL.iNet's own admin panel and in LuCI, and updates like any other package.</p>
+<a class="cta" href="#add">Add them to your router</a>
+</div>
+</header>
+
+<main>
+<h2 id="apps">The apps</h2>
+<div class="apps">
+<article class="app">
+<img src="img/autobackup.png" alt="Auto Backup's list of backups in the GL.iNet admin panel" loading="lazy" width="992" height="590">
+<div class="body">
+<h3>Auto Backup</h3>
+<p>Saves your router's settings to a USB drive on a schedule, and restores them in a couple of clicks.</p>
+<ul>
+<li>Daily or weekly; keeps the newest backups</li>
+<li>Optional AES-256 encryption with your passphrase</li>
+<li>Checks the model and firmware before a restore</li>
+</ul>
+<div class="links"><code>luci-app-autobackup</code> <a href="https://github.com/chaffed/GLINet_Config_Backup">Read more</a></div>
+</div>
+</article>
+<article class="app">
+<img src="img/ispy.png" alt="ISPy's dashboard with a week of speed tests" loading="lazy">
+<div class="body">
+<h3>ISPy</h3>
+<p>Runs internet speed tests on a schedule and shows what your ISP actually delivers, and when.</p>
+<ul>
+<li>Throughput, latency and bufferbloat over time</li>
+<li>Time-of-day statistics</li>
+<li>A printable report comparing measured with advertised speed</li>
+</ul>
+<div class="links"><code>luci-app-ispy</code> <a href="https://github.com/chaffed/luci-app-ispy">Read more</a></div>
+</div>
+</article>
+<article class="app">
+<img src="img/modemhealth.png" alt="Modem Health's overview of a cable modem's signal" loading="lazy">
+<div class="body">
+<h3>Modem Health</h3>
+<p>Watches your cable modem (or T-Mobile 5G gateway) around the clock and keeps the evidence.</p>
+<ul>
+<li>Signal levels, errors, dropouts and outages</li>
+<li>The modem's event log, kept for weeks</li>
+<li>A report for your provider, citing published limits</li>
+</ul>
+<div class="links"><code>luci-app-modemhealth</code> <a href="https://github.com/chaffed/luci-app-modemhealth">Read more</a></div>
+</div>
+</article>
+</div>
+
+<h2 id="add">Add the package source to your router</h2>
+<p>Pick where you're typing. Each way adds the package source once and can install the apps right away. You'll need the router's admin password (it is also its <code>root</code> password for SSH).</p>
+
+<div class="tabs" role="tablist" aria-label="Where you are typing">
+<button role="tab" id="tab-mac" aria-controls="panel-mac" aria-selected="true">Mac or Linux</button>
+<button role="tab" id="tab-win" aria-controls="panel-win" aria-selected="false" tabindex="-1">Windows</button>
+<button role="tab" id="tab-router" aria-controls="panel-router" aria-selected="false" tabindex="-1">On the router (SSH)</button>
+</div>
+
+<section role="tabpanel" id="panel-mac" aria-labelledby="tab-mac">
+<p>Open <strong>Terminal</strong> and paste:</p>
+<div class="cmd"><pre><code>curl -fsSL https://chaffed.github.io/openwrt-packages/install.sh | sh</code></pre></div>
+<p class="muted small">It asks for the router's address (usually <code>192.168.8.1</code> on GL.iNet) and which apps you want, then logs in to the router and sets everything up there.</p>
+</section>
+
+<section role="tabpanel" id="panel-win" aria-labelledby="tab-win" hidden>
+<p>Open <strong>PowerShell</strong> (Start → type "PowerShell") and paste:</p>
+<div class="cmd"><pre><code>irm https://chaffed.github.io/openwrt-packages/install.ps1 | iex</code></pre></div>
+<p class="muted small">It asks for the router's address and which apps you want, then logs in to the router with Windows' built-in SSH client and sets everything up there.</p>
+</section>
+
+<section role="tabpanel" id="panel-router" aria-labelledby="tab-router" hidden>
+<p>Already logged in to the router (<code>ssh root@192.168.8.1</code>)? Paste:</p>
+<div class="cmd"><pre><code>curl -fsSL https://chaffed.github.io/openwrt-packages/setup.sh | sh -s -- all</code></pre></div>
+<p class="muted small">Leave out <code>-s -- all</code> to only add the source, or name the apps instead, for example <code>sh -s -- luci-app-autobackup</code>. On plain OpenWrt without <code>curl</code>, use <code>wget -qO- https://chaffed.github.io/openwrt-packages/setup.sh | sh</code>.</p>
+</section>
+
+<details>
+<summary>What does it change on the router?</summary>
+<p>Two things, and nothing else:</p>
+<ul>
+<li><code>/etc/opkg/keys/e657e1c1cfd7d36d</code>: the key the package list is signed with, so the router can check it really came from here.</li>
+<li>One line in <code>/etc/opkg/customfeeds.conf</code>: <code>src/gz chaffed https://chaffed.github.io/openwrt-packages</code></li>
+</ul>
+<p>Then it runs <code>opkg update</code> and installs the apps you chose. Running it again changes nothing. You can <a href="setup.sh">read the script</a> before you run it, along with <a href="install.sh">install.sh</a> and <a href="install.ps1">install.ps1</a>.</p>
+</details>
+
+<details>
+<summary>Prefer to type it yourself?</summary>
+<p>Over SSH on the router:</p>
+<div class="cmd"><pre><code>printf 'untrusted comment: chaffed openwrt-packages\nRWTmV+HBz9fTbcglagPuNF948y+dkAtJXXWX1qXWQToq02XLmJmxW+wz\n' &gt; /etc/opkg/keys/e657e1c1cfd7d36d
+echo 'src/gz chaffed https://chaffed.github.io/openwrt-packages' &gt;&gt; /etc/opkg/customfeeds.conf
+opkg update
+opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth</code></pre></div>
+</details>
+
+<h2 id="after">After that</h2>
+<ol class="steps">
+<li>Open the GL.iNet admin panel. Sign out and in again if the new apps aren't in the menu yet. Auto Backup is under <strong>System</strong>; ISPy and Modem Health are under <strong>Applications</strong>.</li>
+<li>Updates arrive like any other package: <code>opkg update &amp;&amp; opkg upgrade luci-app-autobackup</code>, or LuCI's <strong>System → Software</strong>. A new release reaches this package source within six hours.</li>
+<li>To remove an app: <code>opkg remove luci-app-autobackup</code>. To remove the package source, delete its line from <code>/etc/opkg/customfeeds.conf</code> and the key file.</li>
+</ol>
+
+<h2 id="works-with">Works with</h2>
+<table>
+<tr><th>Router</th><th></th></tr>
+<tr><td>GL.iNet firmware 4.x</td><td>Yes. Built and tested on a GL-BE9300 (Flint 3) with firmware 4.10.1. The apps add their pages to GL's admin panel.</td></tr>
+<tr><td>OpenWrt 21.02 – 24.10</td><td>Yes (these use <code>opkg</code>). The apps appear in LuCI.</td></tr>
+<tr><td>OpenWrt 25 and later</td><td>Not yet: it uses the <code>apk</code> package manager. Install from each app's GitHub release instead.</td></tr>
+</table>
+<p class="muted small">The apps are architecture independent (shell, Lua and JavaScript), so this one package source serves every router, whatever its processor.</p>
+</main>
+
+<footer>
+<div>
+<p class="muted small">Source, issues and how the package source is built: <a href="https://github.com/chaffed/openwrt-packages">github.com/chaffed/openwrt-packages</a>. MIT licensed. Not affiliated with GL.iNet or OpenWrt.</p>
+</div>
+</footer>
+
+<script>
+(function () {
+	'use strict';
+	/* Tabs: click, arrow keys, and remember the choice for next time. */
+	var tabs = Array.prototype.slice.call(document.querySelectorAll('[role=tab]'));
+	function select(tab, focus) {
+		tabs.forEach(function (t) {
+			var on = t === tab;
+			t.setAttribute('aria-selected', on ? 'true' : 'false');
+			t.tabIndex = on ? 0 : -1;
+			document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+		});
+		if (focus) tab.focus();
+		try { localStorage.setItem('chaffed-tab', tab.id); } catch (e) {}
+	}
+	tabs.forEach(function (t, i) {
+		t.addEventListener('click', function () { select(t); });
+		t.addEventListener('keydown', function (ev) {
+			var d = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0;
+			if (d) { ev.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
+		});
+	});
+	var saved = null;
+	try { saved = localStorage.getItem('chaffed-tab'); } catch (e) {}
+	var first = saved && document.getElementById(saved);
+	if (!first && /Win/.test(navigator.platform || navigator.userAgent)) first = document.getElementById('tab-win');
+	if (first) select(first);
+
+	/* A Copy button on every command. */
+	Array.prototype.forEach.call(document.querySelectorAll('.cmd'), function (box) {
+		var b = document.createElement('button');
+		b.type = 'button';
+		b.className = 'copy';
+		b.textContent = 'Copy';
+		b.addEventListener('click', function () {
+			var text = box.querySelector('code').textContent;
+			var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500); };
+			if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+		});
+		box.appendChild(b);
+	});
+})();
+</script>
+</body>
+</html>
