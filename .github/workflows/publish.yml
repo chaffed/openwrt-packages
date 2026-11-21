@@ -65,12 +65,15 @@ jobs:
         run: |
           python3 -m http.server 8099 --bind 127.0.0.1 --directory site > /dev/null 2>&1 &
           sleep 2
-          docker run --rm --network host openwrt/rootfs:x86-64-23.05.6 sh -c '
+          PKGS=$(sed -n 's/^Package: //p' site/Packages | tr '\n' ' ')
+          echo "packages in this build: $PKGS"
+          [ -n "$PKGS" ]
+          docker run --rm --network host -e PKGS="$PKGS" openwrt/rootfs:x86-64-23.05.6 sh -c '
             set -e
             mkdir -p /var/lock /var/run
             wget -qO /tmp/setup.sh http://127.0.0.1:8099/setup.sh
             CHAFFED_FEED=http://127.0.0.1:8099 sh /tmp/setup.sh all
-            for p in $(sed -n "s/^Package: //p" /var/opkg-lists/chaffed); do
+            for p in $PKGS; do
               opkg list-installed "$p" | grep -q . || { echo "FAIL $p is not installed"; exit 1; }
               echo "ok   $p installed"
             done
