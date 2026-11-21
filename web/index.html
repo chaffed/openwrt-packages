@@ -55,6 +55,19 @@ td, th { text-align: left; padding: .5rem .55rem; border-bottom: 1px solid var(-
 details { border: 1px solid var(--line); border-radius: 8px; padding: .6rem .9rem; margin: .5rem 0; background: var(--card); }
 details summary { cursor: pointer; font-weight: 600; }
 footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 1.5rem 0 2.5rem; }
+.zoom { display: block; padding: 0; margin: 0; border: 0; border-bottom: 1px solid var(--line); background: var(--bg-soft); cursor: zoom-in; width: 100%; position: relative; }
+.zoom img { border-bottom: 0; }
+.zoom::after { content: "Click to enlarge"; position: absolute; right: .5rem; bottom: .5rem; font-size: .78rem; padding: .15rem .5rem; border-radius: 999px; background: rgba(0,0,0,.6); color: #fff; opacity: 0; transition: opacity .15s; }
+.zoom:hover::after, .zoom:focus-visible::after { opacity: 1; }
+.zoom:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+dialog.lightbox { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; overflow: visible; }
+dialog.lightbox::backdrop { background: rgba(10,12,16,.82); }
+dialog.lightbox img { display: block; max-width: 96vw; max-height: 88vh; width: auto; height: auto; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,.5); background: #fff; cursor: zoom-out; }
+dialog.lightbox p { margin: .6rem 0 0; color: #e7e9ec; text-align: center; font-size: .92rem; }
+dialog.lightbox .close { position: absolute; top: -.9rem; right: -.9rem; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 0; background: #fff; color: #1b1e23; font-size: 1.4rem; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+dialog.lightbox .close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { dialog.lightbox .close { top: .4rem; right: .4rem; } }
+@media (prefers-reduced-motion: reduce) { .zoom::after { transition: none; } }
 </style>
 </head>
 <body>
@@ -206,6 +219,41 @@ opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth</code></pre>
 	var first = saved && document.getElementById(saved);
 	if (!first && /Win/.test(navigator.platform || navigator.userAgent)) first = document.getElementById('tab-win');
 	if (first) select(first);
+
+	/* Pictures open full size in a dialog (click, Enter or Space; Esc,
+	 * the close button or a click closes it). */
+	var box = document.createElement('dialog');
+	box.className = 'lightbox';
+	box.setAttribute('aria-label', 'Picture, full size');
+	var big = document.createElement('img'), caption = document.createElement('p'), close = document.createElement('button');
+	close.type = 'button';
+	close.className = 'close';
+	close.setAttribute('aria-label', 'Close');
+	close.textContent = '\u00d7';
+	box.appendChild(close);
+	box.appendChild(big);
+	box.appendChild(caption);
+	document.body.appendChild(box);
+	var shut = function () { if (box.open) box.close(); };
+	close.addEventListener('click', shut);
+	big.addEventListener('click', shut);
+	box.addEventListener('click', function (ev) { if (ev.target === box) shut(); });
+	box.addEventListener('close', function () { big.removeAttribute('src'); });
+	Array.prototype.forEach.call(document.querySelectorAll('.app img'), function (img) {
+		var btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'zoom';
+		btn.setAttribute('aria-label', 'Enlarge: ' + img.alt);
+		img.parentNode.insertBefore(btn, img);
+		btn.appendChild(img);
+		btn.addEventListener('click', function () {
+			big.src = img.currentSrc || img.src;
+			big.alt = img.alt;
+			caption.textContent = img.alt;
+			if (box.showModal) box.showModal(); else window.open(big.src, '_blank');
+			close.focus();
+		});
+	});
 
 	/* A Copy button on every command. */
 	Array.prototype.forEach.call(document.querySelectorAll('.cmd'), function (box) {
