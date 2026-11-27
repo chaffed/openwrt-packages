@@ -41,14 +41,16 @@ if [ -z "$router" ]; then
 	say "  1) Auto Backup    luci-app-autobackup    settings backups to a USB drive"
 	say "  2) ISPy           luci-app-ispy          scheduled speed tests and a report"
 	say "  3) Modem Health   luci-app-modemhealth   cable modem signal and outages"
+	say "  4) Red Book       luci-app-redbook       the router's logs, kept on a USB drive"
 	ask "Numbers separated by spaces, 'all', or Enter for none (just add the source): "
 	for n in $(printf '%s' "$REPLY" | tr ',' ' '); do
 		case "$n" in
 			1) apps="$apps luci-app-autobackup" ;;
 			2) apps="$apps luci-app-ispy" ;;
 			3) apps="$apps luci-app-modemhealth" ;;
+			4) apps="$apps luci-app-redbook" ;;
 			all|a|ALL) apps="all" ;;
-			*) die "'$n' is not one of 1, 2, 3 or all." ;;
+			*) die "'$n' is not one of 1, 2, 3, 4 or all." ;;
 		esac
 	done
 fi
@@ -58,7 +60,7 @@ case "$router" in
 esac
 for a in $apps; do
 	case "$a" in
-		all|luci-app-autobackup|luci-app-ispy|luci-app-modemhealth|autobackup|ispy|modemhealth) ;;
+		all|luci-app-autobackup|luci-app-ispy|luci-app-modemhealth|luci-app-redbook|autobackup|ispy|modemhealth|redbook) ;;
 		*) die "unknown app '$a'." ;;
 	esac
 done

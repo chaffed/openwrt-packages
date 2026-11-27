@@ -23,7 +23,7 @@ set -e
 FEED=${CHAFFED_FEED:-https://chaffed.github.io/openwrt-packages}
 KEY_ID=e657e1c1cfd7d36d
 KEY='RWTmV+HBz9fTbcglagPuNF948y+dkAtJXXWX1qXWQToq02XLmJmxW+wz'
-APPS="luci-app-autobackup luci-app-ispy luci-app-modemhealth"
+APPS="luci-app-autobackup luci-app-ispy luci-app-modemhealth luci-app-redbook"
 
 say() { printf '%s\n' "$*"; }
 die() { printf 'Error: %s\n' "$*" >&2; exit 1; }
@@ -42,8 +42,8 @@ want=""
 for a in "$@"; do
 	case "$a" in
 		all) want="$APPS" ;;
-		luci-app-autobackup|luci-app-ispy|luci-app-modemhealth) want="$want $a" ;;
-		autobackup|ispy|modemhealth) want="$want luci-app-$a" ;;
+		luci-app-autobackup|luci-app-ispy|luci-app-modemhealth|luci-app-redbook) want="$want $a" ;;
+		autobackup|ispy|modemhealth|redbook) want="$want luci-app-$a" ;;
 		*) die "unknown app '$a'. Choose from: $APPS (or all)." ;;
 	esac
 done

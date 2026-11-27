@@ -1,7 +1,7 @@
 # chaffed's OpenWrt packages
 
 A signed package source (opkg feed) for OpenWrt and GL.iNet routers with
-three apps. Its web site, with the one-line setup, is
+four apps. Its web site, with the one-line setup, is
 **https://chaffed.github.io/openwrt-packages/**.
 
 | Package | What it does |
@@ -9,8 +9,9 @@ three apps. Its web site, with the one-line setup, is
 | [luci-app-autobackup](https://github.com/chaffed/GLINet_Config_Backup) | **Auto Backup**: saves the router's settings to a USB drive on a schedule (optionally encrypted) and restores them after checking they fit the router. |
 | [luci-app-ispy](https://github.com/chaffed/luci-app-ispy) | **ISPy**: scheduled internet speed tests, a dashboard, and a report comparing what your ISP delivers with what it advertises. |
 | [luci-app-modemhealth](https://github.com/chaffed/luci-app-modemhealth) | **Modem Health**: watches your cable modem (SURFboard S33/S34) or T-Mobile 5G gateway: signal levels, errors, dropouts and outages, with a report for your provider. |
+| [luci-app-redbook](https://github.com/chaffed/luci-app-redbook) | **Red Book**: keeps the router's logs (system, kernel, restarts, health, and optionally DNS queries, firewall blocks and connections) on a USB drive or network folder, one compressed, checksummed file per log and day. |
 
-All three appear in LuCI and in the GL.iNet admin panel. They are
+All four appear in LuCI and in the GL.iNet admin panel. They are
 architecture independent, so this one source works on any router.
 
 ## Add the source
@@ -57,13 +58,13 @@ changes nothing.
 printf 'untrusted comment: chaffed openwrt-packages\nRWTmV+HBz9fTbcglagPuNF948y+dkAtJXXWX1qXWQToq02XLmJmxW+wz\n' > /etc/opkg/keys/e657e1c1cfd7d36d
 echo 'src/gz chaffed https://chaffed.github.io/openwrt-packages' >> /etc/opkg/customfeeds.conf
 opkg update
-opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth
+opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth luci-app-redbook
 ```
 
 ## Install and update
 
 ```sh
-opkg install luci-app-autobackup   # and/or luci-app-ispy, luci-app-modemhealth
+opkg install luci-app-autobackup   # and/or luci-app-ispy, luci-app-modemhealth, luci-app-redbook
 ```
 
 Later versions arrive like any other package:
@@ -71,8 +72,8 @@ Later versions arrive like any other package:
 **System → Software** in LuCI.
 
 On GL.iNet routers, LuCI is an optional add-on; the apps' pages appear in
-the GL admin panel either way (Auto Backup under System, ISPy and Modem
-Health under Applications).
+the GL admin panel either way (Auto Backup under System; ISPy, Modem
+Health and Red Book under Applications).
 
 ## Requirements
 

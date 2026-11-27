@@ -33,14 +33,15 @@
     Write-Host "  1) Auto Backup    luci-app-autobackup    settings backups to a USB drive"
     Write-Host "  2) ISPy           luci-app-ispy          scheduled speed tests and a report"
     Write-Host "  3) Modem Health   luci-app-modemhealth   cable modem signal and outages"
+    Write-Host "  4) Red Book       luci-app-redbook       the router's logs, kept on a USB drive"
     $choice = Read-Host "Numbers separated by spaces, 'all', or Enter for none (just add the source)"
 
-    $names = @{ '1' = 'luci-app-autobackup'; '2' = 'luci-app-ispy'; '3' = 'luci-app-modemhealth' }
+    $names = @{ '1' = 'luci-app-autobackup'; '2' = 'luci-app-ispy'; '3' = 'luci-app-modemhealth'; '4' = 'luci-app-redbook' }
     $apps = @()
     foreach ($n in ($choice -split '[\s,]+' | Where-Object { $_ -ne '' })) {
         if ($n -ieq 'all') { $apps = @('all'); break }
         if (-not $names.ContainsKey($n)) {
-            Write-Host "'$n' is not one of 1, 2, 3 or all." -ForegroundColor Red
+            Write-Host "'$n' is not one of 1, 2, 3, 4 or all." -ForegroundColor Red
             return
         }
         $apps += $names[$n]

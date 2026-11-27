@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>chaffed's OpenWrt packages</title>
-<meta name="description" content="Apps for GL.iNet and OpenWrt routers: Auto Backup, ISPy and Modem Health, from one signed package source.">
+<meta name="description" content="Apps for GL.iNet and OpenWrt routers: Auto Backup, ISPy, Modem Health and Red Book, from one signed package source.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6fdf'/%3E%3Cpath d='M9 19a7 7 0 0 1 14 0' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='19' r='2.4' fill='white'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -31,7 +31,7 @@ h3 { font-size: 1.1rem; margin: 0 0 .3rem; }
 .muted { color: var(--muted); }
 .small { font-size: .9rem; }
 .cta { display: inline-block; margin-top: 1.2rem; padding: .6rem 1.1rem; border-radius: 8px; background: var(--accent); color: var(--accent-fg); text-decoration: none; font-weight: 600; }
-.apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); gap: 1rem; }
+.apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 1rem; }
 .app { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
 .app img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); background: var(--bg-soft); display: block; }
 .app .body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; flex: 1; }
@@ -121,6 +121,19 @@ dialog.lightbox .close:focus-visible { outline: 2px solid var(--accent); outline
 <div class="links"><code>luci-app-modemhealth</code> <a href="https://github.com/chaffed/luci-app-modemhealth">Read more</a></div>
 </div>
 </article>
+<article class="app">
+<img src="img/redbook.png" alt="Red Book's overview: where the logs go, each log and how long it is kept, and a log viewer" loading="lazy">
+<div class="body">
+<h3>Red Book</h3>
+<p>Keeps your router's logs on a USB drive or network folder, so they survive restarts and power cuts.</p>
+<ul>
+<li>System, kernel, restarts and health; DNS, firewall and connections if you choose</li>
+<li>One compressed, checksummed file per log and day, kept as long as you set</li>
+<li>Configs for sending the log to rsyslog, syslog-ng or syslogd</li>
+</ul>
+<div class="links"><code>luci-app-redbook</code> <a href="https://github.com/chaffed/luci-app-redbook">Read more</a></div>
+</div>
+</article>
 </div>
 
 <h2 id="add">Add the package source to your router</h2>
@@ -166,12 +179,12 @@ dialog.lightbox .close:focus-visible { outline: 2px solid var(--accent); outline
 <div class="cmd"><pre><code>printf 'untrusted comment: chaffed openwrt-packages\nRWTmV+HBz9fTbcglagPuNF948y+dkAtJXXWX1qXWQToq02XLmJmxW+wz\n' &gt; /etc/opkg/keys/e657e1c1cfd7d36d
 echo 'src/gz chaffed https://chaffed.github.io/openwrt-packages' &gt;&gt; /etc/opkg/customfeeds.conf
 opkg update
-opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth</code></pre></div>
+opkg install luci-app-autobackup luci-app-ispy luci-app-modemhealth luci-app-redbook</code></pre></div>
 </details>
 
 <h2 id="after">After that</h2>
 <ol class="steps">
-<li>Open the GL.iNet admin panel. Sign out and in again if the new apps aren't in the menu yet. Auto Backup is under <strong>System</strong>; ISPy and Modem Health are under <strong>Applications</strong>.</li>
+<li>Open the GL.iNet admin panel. Sign out and in again if the new apps aren't in the menu yet. Auto Backup is under <strong>System</strong>; ISPy, Modem Health and Red Book are under <strong>Applications</strong>.</li>
 <li>Updates arrive like any other package: <code>opkg update &amp;&amp; opkg upgrade luci-app-autobackup</code>, or LuCI's <strong>System → Software</strong>. A new release reaches this package source within six hours.</li>
 <li>To remove an app: <code>opkg remove luci-app-autobackup</code>. To remove the package source, delete its line from <code>/etc/opkg/customfeeds.conf</code> and the key file.</li>
 </ol>
